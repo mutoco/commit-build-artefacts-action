@@ -1,0 +1,25 @@
+name: 'Commit build artefacts'
+description: 'Commit build artefacts to a build repository'
+author: 'mutoco'
+branding:
+  icon: copy
+  color: purple
+inputs:
+  source:
+    description: 'Source folder, defaults to ./build'
+    required: false
+    default: './build'
+  suffix:
+    description: 'Build repository suffix, defaults to `-build`'
+    required: false
+    default: '-build'
+  organisation:
+    description: 'Can be used to set the organisation'
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.source }}
+    - ${{ inputs.suffix }}
+    - ${{ inputs.organisation }}
