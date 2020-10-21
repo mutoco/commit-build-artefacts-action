@@ -8,7 +8,7 @@ inputs:
   source:
     description: 'Source folder, defaults to ./build'
     required: false
-    default: './build'
+    default: 'build'
   suffix:
     description: 'Build repository suffix, defaults to `-build`'
     required: false

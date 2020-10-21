@@ -7,6 +7,9 @@ if [[ $# -lt 1 ]]; then
     exit 2
 fi
 
+#TODO: Make these configurable
+git_email="tools@mutoco.ch"
+git_name="Builder"
 source=$1
 
 if [ ! -d "$source" ]; then
@@ -54,11 +57,39 @@ mkdir $dir
 cd $dir
 
 if [[ `git ls-remote $repo_url refs/*/$branch` ]]; then
-    printTitle "- Branch $branch already exists, checking out."
+    echo "Branch $branch already exists, checking out."
     git clone --branch $branch --depth 25 $repo_url .
 else
-    printTitle "- Branch name $branch doesn't exist yet - will create."
+    echo "Branch name $branch doesn't exist yet - will create."
     git clone --depth 1 $repo_url .
     git checkout --orphan $branch
     git rm -rfq --ignore-unmatch .
 fi
+
+git config --global user.email $git_email
+git config --global user.name $git_name
+git config http.postBuffer 157286400
+
+echo ".gitignore" >> ".rsync-exclude.txt"
+echo ".git" >> ".rsync-exclude.txt"
+rsync -ac ../$source/ . --delete --exclude-from='.rsync-exclude.txt'
+#cat ".rsync-exclude.txt"
+rm -f ".rsync-exclude.txt"
+
+git add -u
+git add -A .
+
+# head will limit to max n number of lines
+last_commit_messages="$(git diff --color=never --staged .gitlog | egrep "^\+[^\+]" | head -n20)"
+
+if git diff-index --quiet HEAD --; then
+    # no changes
+    echo "No changes to previous build. Nothing to commit."
+else
+    git commit -a -m "Build ${GITHUB_RUN_NUMBER} -- $last_commit_messages"
+    git push origin $branch
+    echo "Pushed changes to build repository: Build ${GITHUB_RUN_NUMBER} -- $last_commit_messages"
+fi
+
+cd ..
+rm -rf $dir
