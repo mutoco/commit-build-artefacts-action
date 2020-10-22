@@ -14,12 +14,17 @@ inputs:
     required: false
     default: '-build'
   organisation:
-    description: 'Can be used to set the organisation'
+    description: 'Will create repository for that organisation if set'
     required: false
+  committer_email:
+    description: 'Committer email'
+    required: false
+  committer_name:
+    description: 'Committer name'
+    required: false
+    default: 'Anonymous'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.source }}
-    - ${{ inputs.suffix }}
-    - ${{ inputs.organisation }}

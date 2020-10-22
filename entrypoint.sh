@@ -2,31 +2,28 @@
 
 set -e
 
-if [[ $# -lt 1 ]]; then
-    echo "Illegal number of parameters. Need at least source dir as first param"
+if [[ $# -ne 1 || ! -d "$1" ]]; then
+    echo "Need a source dir as first param"
     exit 2
 fi
 
-#TODO: Make these configurable
-git_email="tools@mutoco.ch"
-git_name="Builder"
+# Initialize variables from inputs
 source=$1
+source_path="$(realpath $source)"
+build_suffix=${INPUT_SUFFIX:--build}
+git_user=${INPUT_COMMITTER_NAME:-Anonymous}
+git_email=$INPUT_COMMITTER_EMAIL
 
-if [ ! -d "$source" ]; then
-  echo "First parameter needs to be a directory"
-  exit 2
-fi
+# GITHUB_REF and GITHUB_REPOSITORY are part of the default ENV variables from Github
+branch=${GITHUB_REF##*/}
+build_repo="${GITHUB_REPOSITORY}${build_suffix}"
 
-build_suffix=${2:--build}
-
-if [ ! -z "$3" ]; then
-  api_endpoint="https://api.github.com/orgs/$3/repos"
+if [ ! -z "$INPUT_ORGANISATION" ]; then
+  api_endpoint="https://api.github.com/orgs/$INPUT_ORGANISATION/repos"
 else
   api_endpoint="https://api.github.com/user/repos"
 fi
 
-branch=${GITHUB_REF##*/}
-build_repo="${GITHUB_REPOSITORY}${build_suffix}"
 
 status=$(curl -sI GET -u "${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo" 2>/dev/null | head -n 1 | cut -d$' ' -f2)
 if [ $status = "404" ]; then
@@ -48,10 +45,10 @@ fi
 
 repo_url="https://${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}@github.com/$build_repo.git"
 
-dir=repo
+dir=build-artefacts-tmp
 git log --pretty=format:"%s" > $source/.gitlog
 
-echo "Checking if branch $branch already exists ..."
+echo "Checking if branch $branch already exists…"
 
 mkdir $dir
 cd $dir
@@ -66,14 +63,16 @@ else
     git rm -rfq --ignore-unmatch .
 fi
 
-git config --global user.email $git_email
+if [ ! -z $git_email ]; then
+  git config --global user.email $git_email
+fi
 git config --global user.name $git_name
 git config http.postBuffer 157286400
 
 echo ".gitignore" >> ".rsync-exclude.txt"
 echo ".git" >> ".rsync-exclude.txt"
-rsync -ac ../$source/ . --delete --exclude-from='.rsync-exclude.txt'
-#cat ".rsync-exclude.txt"
+
+rsync -ac $source_path . --delete --exclude-from='.rsync-exclude.txt'
 rm -f ".rsync-exclude.txt"
 
 git add -u
