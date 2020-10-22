@@ -86,4 +86,8 @@ jobs:
           API_ACCESS_TOKEN: ${{ secrets.MY_PAT }}
 ```
 
+## TODO
+
+-[ ] Check if authenticated requests can be made by just using the checkout action 
+
 Inspired by [HV-Publish](https://bitbucket.org/hinderlingvolkart/hv-publish/src/master/)
