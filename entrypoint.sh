@@ -47,14 +47,15 @@ echo "Checking if branch $branch already exists…"
 mkdir $dir
 cd $dir
 
-if [[ `git ls-remote --heads $repo_url $branch` ]]; then
-    echo "Branch $branch already exists, checking out."
-    git clone --branch $branch --depth 25 $repo_url .
-else
+git ls-remote --heads ${repo_url} ${branch} | grep ${branch} >/dev/null
+if [ "$?" == "1" ]; then
     echo "Branch name $branch doesn't exist yet - will create."
     git clone --depth 1 $repo_url .
     git checkout --orphan $branch
     git rm -rfq --ignore-unmatch .
+else
+    echo "Branch $branch already exists, checking out."
+    git clone --branch $branch --depth 25 $repo_url .
 fi
 
 git config http.postBuffer 157286400
