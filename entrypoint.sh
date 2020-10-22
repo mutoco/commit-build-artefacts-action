@@ -2,14 +2,10 @@
 
 set -e
 
-if [[ $# -ne 1 || ! -d "$1" ]]; then
-    echo "Need a source dir as first param"
-    exit 2
-fi
-
 # Initialize variables from inputs
-source=$1
-source_path="$(realpath $source)"
+source_dir=${INPUT_SOURCE:-build}
+source_path="$GITHUB_WORKSPACE/$source_dir"
+#source_path="$(realpath $source)"
 build_suffix=${INPUT_SUFFIX:--build}
 
 # GITHUB_REF and GITHUB_REPOSITORY are part of the default ENV variables from Github
@@ -43,8 +39,8 @@ fi
 
 repo_url="https://${API_USERNAME}:${API_ACCESS_TOKEN}@github.com/$build_repo.git"
 
-dir=build-artefacts-tmp
-git log --pretty=format:"%s" > $source/.gitlog
+dir="$GITHUB_WORKSPACE/build-artefacts-tmp"
+git log --pretty=format:"%s" > $source_path/.gitlog
 
 echo "Checking if branch $branch already exists…"
 

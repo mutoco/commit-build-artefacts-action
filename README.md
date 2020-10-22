@@ -13,7 +13,7 @@ The build-repository will get generated automatically. Branches will be mirrored
 
 #### `source`
 
-**Optional** The build output directory. Default `"build"`.
+**Optional** The build output directory, relative to the `GITHUB_WORKSPACE`. Default `"build"`.
 
 #### `suffix`
 
