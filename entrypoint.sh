@@ -27,7 +27,7 @@ if [ $status = "404" ]; then
     # and from here we will create the new repository (same privacy, same type (scm), same project)
     curl -s -X POST -u "${API_USERNAME}:${API_ACCESS_TOKEN}" -H "Content-Type: application/json" -d @current-project.json "$api_endpoint" > new-project.json
     # Set the proper build-repo name from the API response
-    build_repo=$(cat ./new-project.json | jq .full_name)
+    build_repo=$(cat ./new-project.json | jq -r .full_name)
 else
     echo "Found build repository $build_repo"
 fi
