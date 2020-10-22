@@ -9,7 +9,7 @@ source_path="$GITHUB_WORKSPACE/$source_dir"
 build_suffix=${INPUT_SUFFIX:--build}
 
 # GITHUB_REF and GITHUB_REPOSITORY are part of the default ENV variables from Github
-branch=${GITHUB_REF##*/}
+branch=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g")
 build_repo="${GITHUB_REPOSITORY}${build_suffix}"
 
 if [ ! -z "$INPUT_ORGANISATION" ]; then
