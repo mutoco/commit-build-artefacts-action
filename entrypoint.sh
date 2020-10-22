@@ -84,4 +84,4 @@ else
 fi
 
 cd ..
-#rm -rf $dir
+rm -rf $dir
