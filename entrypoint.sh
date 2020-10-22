@@ -47,7 +47,7 @@ echo "Checking if branch $branch already exists…"
 mkdir $dir
 cd $dir
 
-if [[ `git ls-remote $repo_url refs/*/$branch` ]]; then
+if [[ `git ls-remote --heads $repo_url $branch` ]]; then
     echo "Branch $branch already exists, checking out."
     git clone --branch $branch --depth 25 $repo_url .
 else
