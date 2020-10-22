@@ -47,8 +47,8 @@ echo "Checking if branch $branch already exists…"
 mkdir $dir
 cd $dir
 
-git ls-remote --heads ${repo_url} ${branch} | grep ${branch} >/dev/null
-if [ "$?" == "1" ]; then
+status=$(curl -sI GET -u "${API_USERNAME}:${API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo/branches/$branch" 2>/dev/null | head -n 1 | cut -d ' ' -f2)
+if [ $status = "404" ]; then
     echo "Branch name $branch doesn't exist yet - will create."
     git clone --depth 1 $repo_url .
     git checkout --orphan $branch
