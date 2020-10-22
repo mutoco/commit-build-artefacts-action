@@ -43,14 +43,14 @@ Is empty by default
 The following environment variables must be set in order for this
 script to run.
 
-#### `GITHUB_API_ACCESS_TOKEN`
+#### `API_ACCESS_TOKEN`
 
 **Required** Provide an API token with permissions to create a repository.
 Instructions on [creating a personal access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token).
 
 Make sure to tick the `repo` permission group.
 
-#### `GITHUB_API_USERNAME`
+#### `API_USERNAME`
 
 **Required** Set the username that belongs to the access token.
 
@@ -82,8 +82,8 @@ jobs:
           committer_name: Build-Tools
           committer_email: email@example.com
         env:
-          GITHUB_API_USERNAME: username
-          GITHUB_API_ACCESS_TOKEN: ${{ secrets.MY_GITHUB_PAT }}
+          API_USERNAME: username
+          API_ACCESS_TOKEN: ${{ secrets.MY_PAT }}
 ```
 
 Inspired by [HV-Publish](https://bitbucket.org/hinderlingvolkart/hv-publish/src/master/)

@@ -23,13 +23,13 @@ else
 fi
 
 
-status=$(curl -sI GET -u "${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo" 2>/dev/null | head -n 1 | cut -d$' ' -f2)
+status=$(curl -sI GET -u "${API_USERNAME}:${API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo" 2>/dev/null | head -n 1 | cut -d$' ' -f2)
 if [ $status = "404" ]; then
     echo "Build repository does not exist, creating new $build_repo"
     # let's first get info about current repository
-    curl -s -X GET -u "${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}" "https://api.github.com/repos/${GITHUB_REPOSITORY}" | jq "{ private: .private, name: (.name + \"$build_suffix\"), description: (.name + \" (Build)\") }" > current-project.json
+    curl -s -X GET -u "${API_USERNAME}:${API_ACCESS_TOKEN}" "https://api.github.com/repos/${GITHUB_REPOSITORY}" | jq "{ private: .private, name: (.name + \"$build_suffix\"), description: (.name + \" (Build)\") }" > current-project.json
     # and from here we will create the new repository (same privacy, same type (scm), same project)
-    curl -s -X POST -u "${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}" -H "Content-Type: application/json" -d @current-project.json "$api_endpoint" > new-project.json
+    curl -s -X POST -u "${API_USERNAME}:${API_ACCESS_TOKEN}" -H "Content-Type: application/json" -d @current-project.json "$api_endpoint" > new-project.json
     # Set the proper build-repo name from the API response
     build_repo=$(cat ./new-project.json | jq .full_name)
 else
@@ -41,7 +41,7 @@ if [ -z "$build_repo" ]; then
   exit 1
 fi
 
-repo_url="https://${GITHUB_API_USERNAME}:${GITHUB_API_ACCESS_TOKEN}@github.com/$build_repo.git"
+repo_url="https://${API_USERNAME}:${API_ACCESS_TOKEN}@github.com/$build_repo.git"
 
 dir=build-artefacts-tmp
 git log --pretty=format:"%s" > $source/.gitlog
