@@ -28,3 +28,8 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.source }}
+  env:
+    GIT_COMMITTER_EMAIL: ${{ inputs.committer_email }}
+    GIT_COMMITTER_NAME: ${{ inputs.committer_name }}
+    GIT_AUTHOR_EMAIL: ${{ inputs.committer_email }}
+    GIT_AUTHOR_NAME: ${{ inputs.committer_name }}

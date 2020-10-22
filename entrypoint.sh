@@ -11,8 +11,6 @@ fi
 source=$1
 source_path="$(realpath $source)"
 build_suffix=${INPUT_SUFFIX:--build}
-git_user=${INPUT_COMMITTER_NAME:-Anonymous}
-git_email=$INPUT_COMMITTER_EMAIL
 
 # GITHUB_REF and GITHUB_REPOSITORY are part of the default ENV variables from Github
 branch=${GITHUB_REF##*/}
@@ -63,10 +61,6 @@ else
     git rm -rfq --ignore-unmatch .
 fi
 
-if [ ! -z $git_email ]; then
-  git config --global user.email $git_email
-fi
-git config --global user.name $git_name
 git config http.postBuffer 157286400
 
 echo ".gitignore" >> ".rsync-exclude.txt"
@@ -75,7 +69,6 @@ echo ".git" >> ".rsync-exclude.txt"
 rsync -ac $source_path . --delete --exclude-from='.rsync-exclude.txt'
 rm -f ".rsync-exclude.txt"
 
-git add -u
 git add -A .
 
 # head will limit to max n number of lines
@@ -91,4 +84,4 @@ else
 fi
 
 cd ..
-rm -rf $dir
+#rm -rf $dir
