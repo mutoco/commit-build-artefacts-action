@@ -66,7 +66,7 @@ git config http.postBuffer 157286400
 echo ".gitignore" >> ".rsync-exclude.txt"
 echo ".git" >> ".rsync-exclude.txt"
 
-rsync -ac $source_path . --delete --exclude-from='.rsync-exclude.txt'
+rsync -ac $source_path/ . --delete --exclude-from='.rsync-exclude.txt'
 rm -f ".rsync-exclude.txt"
 
 git add -A .
