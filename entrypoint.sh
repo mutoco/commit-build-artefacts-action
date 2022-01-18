@@ -48,14 +48,14 @@ mkdir $dir
 cd $dir
 
 status=$(curl -sI GET -u "${API_USERNAME}:${API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo/branches/$branch" 2>/dev/null | head -n 1 | cut -d ' ' -f2)
-if [ $status = "404" ]; then
+if [ $status = "200" ]; then
+    echo "Branch $branch already exists, checking out."
+    git clone --branch $branch --depth 25 $repo_url .
+else
     echo "Branch name $branch doesn't exist yet - will create."
     git clone --depth 1 $repo_url .
     git checkout --orphan $branch
     git rm -rfq --ignore-unmatch .
-else
-    echo "Branch $branch already exists, checking out."
-    git clone --branch $branch --depth 25 $repo_url .
 fi
 
 git config http.postBuffer 157286400
