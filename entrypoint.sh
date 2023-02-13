@@ -18,6 +18,8 @@ else
   api_endpoint="https://api.github.com/user/repos"
 fi
 
+# Fix for https://github.com/actions/runner/issues/2033
+git config --global --add safe.directory '*'
 
 status=$(curl -sI GET -u "${API_USERNAME}:${API_ACCESS_TOKEN}" "https://api.github.com/repos/$build_repo" 2>/dev/null | head -n 1 | cut -d ' ' -f2)
 if [ $status = "404" ]; then
